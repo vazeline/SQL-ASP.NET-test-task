@@ -1,0 +1,58 @@
+# Результаты сборки .NET
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Pp]ublish/
+artifacts/
+*.dll
+*.exe
+*.pdb
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+project.lock.json
+project.fragment.lock.json
+
+# Результаты тестов
+[Tt]est[Rr]esult*/
+[Tt]est[Rr]uns/
+*.trx
+*.coverage
+*.coveragexml
+*.lcov
+coverage*.json
+coverage*.xml
+coverage*.info
+
+# Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.DotSettings.user
+
+# Файлы баз данных SQL Server
+*.mdf
+*.ldf
+*.ndf
+
+# Журналы, временные и резервные файлы
+*.log
+*.tmp
+*.temp
+*.bak
+~$*
+Thumbs.db
+.DS_Store
+
+# Сертификаты и ключи
+*.pfx
+*.snupk
+*.snk
