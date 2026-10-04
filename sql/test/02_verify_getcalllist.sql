@@ -64,10 +64,11 @@ DECLARE @Expected TABLE
 
 -- Клиент 1: период от 2026-09-11 = 23 дня (не 184), 114 / 23 = 4.9565, последний заказ 38 л -> 8 дней.
 -- Клиент 4: период от 2026-09-01 = 33 дня, 95 / 33 = 2.8788, последний заказ 19 л (2 - 1 возврат) -> 7 дней.
+-- Колонка PeriodDays содержит фактический делитель клиента, EffectiveDays - независимая проверка PeriodVolume / AvgDayVolume.
 INSERT INTO @Expected (NOwner, LastOrderDate, LastOrderVolume, PeriodVolume, PeriodDays, AvgDayVolume, DaysAfterLastOrder, EffectiveDays)
 VALUES
-    (1, '20260925', 38, 114, 184, 4.9565, 8, 23),
-    (4, '20260926', 19,  95, 184, 2.8788, 7, 33);
+    (1, '20260925', 38, 114, 23, 4.9565, 8, 23),
+    (4, '20260926', 19,  95, 33, 2.8788, 7, 33);
 
 ;WITH Diff AS
 (
@@ -123,12 +124,13 @@ GO
 
 PRINT '=== 2026-10-09: клиент 8 (первый заказ до окна -> полный период 184 дня) ===';
 INSERT #Actual EXEC dbo.usp_GetCallList @CalcDate = '20261009';
-SELECT NOwner, LastOrderDate, LastOrderVolume, PeriodVolume, AvgDayVolume = ROUND(AvgDayVolume, 4),
+SELECT NOwner, LastOrderDate, LastOrderVolume, PeriodVolume, PeriodDays, AvgDayVolume = ROUND(AvgDayVolume, 4),
        DaysAfterLastOrder, EffectiveDays = CONVERT(INT, ROUND(PeriodVolume / AvgDayVolume, 0))
 FROM #Actual;
 
 SELECT 'TEST 4' AS Test,
        CASE WHEN COUNT(*) = 1 AND MIN(NOwner) = 8
+             AND MIN(PeriodDays) = 184
              AND MIN(CONVERT(INT, ROUND(PeriodVolume / AvgDayVolume, 0))) = 184
             THEN 'PASS: на 2026-10-09 только клиент 8, период 184 дня (первый заказ раньше окна)'
             ELSE 'FAIL: в списке ' + CONVERT(VARCHAR(10), COUNT(*)) + ' строк(и)'

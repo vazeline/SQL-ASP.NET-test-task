@@ -64,8 +64,11 @@ BEGIN
 		SELECT d.Receive  AS NOwner,
 			   MIN(CONVERT(DATE, COALESCE(d.AccountDate, d.CreatDate)))  AS FirstOrderDate
 		FROM dbo.DOC    AS d
+        JOIN dbo.DOCSTR AS ds ON ds.NDoc = d.NDoc
 		WHERE d.IsShipped  = 1 
 			  AND d.IsRegister = 1
+              AND ds.Item IN (1, 4, 8)
+              AND ds.Oper IN (1, 2)
 		GROUP BY d.Receive	  
 	),
     ClientOrders AS
@@ -91,9 +94,11 @@ BEGIN
                 s.LastOrderDate,
                 s.LastOrderVolume,
                 s.PeriodVolume,
-                AvgDayVolume = s.PeriodVolume / IIF(c.FirstOrderDate <= @FromDate, @PeriodDays, DATEDIFF(DAY, c.FirstOrderDate, @Date) + 1)
+                p.Days        AS PeriodDays,
+                AvgDayVolume = s.PeriodVolume / p.Days
         FROM ClientStat AS s
-			LEFT JOIN ClientFirstOrderDates AS c ON c.NOwner = s.NOwner
+        LEFT JOIN ClientFirstOrderDates AS c ON c.NOwner = s.NOwner
+        CROSS APPLY (SELECT Days = IIF(c.FirstOrderDate <= @FromDate, @PeriodDays, DATEDIFF(DAY, c.FirstOrderDate, @Date) + 1)) AS p
         WHERE s.PeriodVolume > 0
           AND s.LastOrderVolume > 0
     ),
@@ -103,6 +108,7 @@ BEGIN
                 x.LastOrderDate,
                 x.LastOrderVolume,
                 x.PeriodVolume,
+                x.PeriodDays,
                 AvgDayVolume = x.AvgDayVolume,
                 q.Days    AS DaysAfterLastOrder,
                 CallDate  = DATEADD(DAY, q.Days, x.LastOrderDate)
@@ -128,7 +134,7 @@ BEGIN
             e.LastOrderDate,
             e.LastOrderVolume,
             e.PeriodVolume,
-            @PeriodDays,
+            e.PeriodDays,
             e.AvgDayVolume,
             e.DaysAfterLastOrder
     FROM ExpectedCall AS e
@@ -153,5 +159,6 @@ BEGIN
             DaysAfterLastOrder
     FROM #CallList
     ORDER BY Region, City, Owner;
+	
 END
 GO
