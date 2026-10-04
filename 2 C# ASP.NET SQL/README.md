@@ -130,7 +130,8 @@ Employees\
   Models\Employee.cs                     сущность (bdate -> HireDate, edate -> DismissDate)
   Models\Api\EmployeeContracts.cs        DTO, запросы, IValidatableObject
   Models\ViewModels\EmployeesListViewModel.cs
-  Data\EmployeesDbContext.cs              маппинг EF Core
+  Data\EmployeesDbContext.cs              контекст EF Core
+  Data\EmployeeConfiguration.cs          маппинг Employee (IEntityTypeConfiguration)
   Services\EmployeeService.cs            поиск, фильтры, пагинация, CRUD
   Views\Employees\Index.cshtml           таблица, фильтры, модальное окно
   wwwroot\js\employees.js                работа с API и модальным окном
