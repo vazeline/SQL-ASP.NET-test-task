@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
+
+/* Курсор-указатель на интерактивных элементах таблицы. */
+button:not(:disabled),
+select:not(:disabled) {
+  cursor: pointer;
+}
