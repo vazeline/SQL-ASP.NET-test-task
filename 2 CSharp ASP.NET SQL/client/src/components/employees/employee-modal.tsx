@@ -113,7 +113,7 @@ export function EmployeeModal({ onDone }: EmployeeModalProps) {
     }
   }
 
-  const title = modalMode === "create" ? "Новый сотрудник" : "Изменить сотрудника";
+  const title = modalMode === "create" ? "Добавление сотрудника" : "Изменение сотрудника";
 
   return (
     <div
